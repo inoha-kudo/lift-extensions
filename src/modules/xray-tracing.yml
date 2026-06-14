@@ -1,0 +1,8 @@
+provider:
+    tracing:
+        apiGateway: true
+        lambda: true
+    iam:
+        role:
+            managedPolicies:
+                - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSXRayDaemonWriteAccess
