@@ -1,0 +1,34 @@
+provider:
+    environment:
+        APP_MAINTENANCE_DRIVER: cache
+        APP_MAINTENANCE_STORE: dynamodb
+        CACHE_STORE: dynamodb
+        DYNAMODB_CACHE_TABLE: !Ref CacheTable
+    iam:
+        role:
+            statements:
+                - Effect: Allow
+                  Action:
+                      - dynamodb:BatchGetItem
+                      - dynamodb:BatchWriteItem
+                      - dynamodb:DeleteItem
+                      - dynamodb:GetItem
+                      - dynamodb:PutItem
+                      - dynamodb:UpdateItem
+                  Resource: !GetAtt CacheTable.Arn
+
+resources:
+    Resources:
+        CacheTable:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                BillingMode: PAY_PER_REQUEST
+                AttributeDefinitions:
+                    - AttributeName: key
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: key
+                      KeyType: HASH
+                TimeToLiveSpecification:
+                    AttributeName: expires_at
+                    Enabled: true

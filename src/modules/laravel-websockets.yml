@@ -1,0 +1,71 @@
+provider:
+    environment:
+        BROADCAST_CONNECTION: api-gateway
+        BREF_WEBSOCKET_API_ID: !Ref WebsocketsApi
+        BREF_WEBSOCKET_STAGE: ${sls:stage}
+        BREF_WEBSOCKET_STORE: dynamodb
+        BREF_WEBSOCKET_DYNAMODB_TABLE: !Ref WebsocketSubscriptionsTable
+    iam:
+        role:
+            statements:
+                - Effect: Allow
+                  Action: execute-api:ManageConnections
+                  Resource: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${WebsocketsApi}/*
+                - Effect: Allow
+                  Action: lambda:InvokeFunction
+                  Resource: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${sls:stage}-websocket
+                - Effect: Allow
+                  Action:
+                      - dynamodb:DeleteItem
+                      - dynamodb:PutItem
+                      - dynamodb:Query
+                  Resource:
+                      - !GetAtt WebsocketSubscriptionsTable.Arn
+                      - !Sub ${WebsocketSubscriptionsTable.Arn}/index/*
+
+functions:
+    websocket:
+        image:
+            name: laravel
+            command:
+                - Bref\LaravelWebsockets\Handler
+        timeout: 28
+        events:
+            - websocket: $connect
+            - websocket: $disconnect
+            - websocket: $default
+        environment:
+            BREF_RUNTIME: function
+
+resources:
+    Resources:
+        WebsocketSubscriptionsTable:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                BillingMode: PAY_PER_REQUEST
+                AttributeDefinitions:
+                    - AttributeName: PK
+                      AttributeType: S
+                    - AttributeName: SK
+                      AttributeType: S
+                    - AttributeName: GSI-1-PK
+                      AttributeType: S
+                    - AttributeName: GSI-1-SK
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: PK
+                      KeyType: HASH
+                    - AttributeName: SK
+                      KeyType: RANGE
+                GlobalSecondaryIndexes:
+                    - IndexName: GSI-1
+                      KeySchema:
+                          - AttributeName: GSI-1-PK
+                            KeyType: HASH
+                          - AttributeName: GSI-1-SK
+                            KeyType: RANGE
+                      Projection:
+                          ProjectionType: ALL
+                TimeToLiveSpecification:
+                    AttributeName: TimeToLive
+                    Enabled: true
