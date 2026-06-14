@@ -1,0 +1,17 @@
+provider:
+    environment:
+        DB_CONNECTION: dsql
+        DB_HOST: !GetAtt Database.Endpoint
+    iam:
+        role:
+            statements:
+                - Effect: Allow
+                  Action: dsql:DbConnectAdmin
+                  Resource: !GetAtt Database.ResourceArn
+
+resources:
+    Resources:
+        Database:
+            Type: AWS::DSQL::Cluster
+            DeletionPolicy: Retain
+            UpdateReplacePolicy: Retain
