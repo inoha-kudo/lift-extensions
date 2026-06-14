@@ -1,0 +1,35 @@
+{
+    "name": "lift-extensions",
+    "version": "0.5.0",
+    "license": "MIT",
+    "files": [
+        "src"
+    ],
+    "exports": {
+        ".": "./src/plugin.mjs"
+    },
+    "type": "module",
+    "dependencies": {
+        "aws-cdk-lib": "^2.268.0",
+        "constructs": "^10.8.1",
+        "defu": "^6.1.7",
+        "jiti": "^2.7.0",
+        "yaml": "^2.9.0"
+    },
+    "devDependencies": {
+        "json-schema-to-ts": "^3.1.1"
+    },
+    "peerDependencies": {
+        "osls": "^3 || ^4.0.0-beta.0",
+        "serverless": "^3 || ^4",
+        "serverless-lift": "^1.37.7"
+    },
+    "peerDependenciesMeta": {
+        "osls": {
+            "optional": true
+        },
+        "serverless": {
+            "optional": true
+        }
+    }
+}
