@@ -1,6 +1,7 @@
 import { AwsProvider } from 'serverless-lift/dist/src/providers/AwsProvider.js';
 import {
     FunctionRole,
+    LaravelCloudReverb,
     LaravelDsql,
     LaravelDynamoDbCache,
     Module,
@@ -12,6 +13,7 @@ export default class LiftExtensionsPlugin {
     constructor(serverless: Serverless) {
         AwsProvider.registerConstructs(
             FunctionRole,
+            LaravelCloudReverb,
             LaravelDsql,
             LaravelDynamoDbCache,
             Module,

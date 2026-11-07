@@ -1,6 +1,6 @@
 {
     "name": "lift-extensions",
-    "version": "0.8.0",
+    "version": "0.7.10",
     "license": "MIT",
     "files": [
         "src"
